@@ -17,75 +17,9 @@ PADDLE_SHRINK_RATE = 8
 BALL_SIZE = 22
 PADDLE_SPEED = 8
 
-# Enable alpha blending for transparency
-screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
-
-# Bot difficulty settings
-BOT_DIFFICULTY = {
-    'EASY': {'speed': 4, 'reaction_delay': 0.3, 'prediction_error': 100},
-    'MEDIUM': {'speed': 6, 'reaction_delay': 0.15, 'prediction_error': 50},
-    'HARD': {'speed': 8, 'reaction_delay': 0.05, 'prediction_error': 20},
-    'ULTRA': {'speed': 10, 'reaction_delay': 0, 'prediction_error': 5}
-}
-
-# UI Constants
-RING_RADIUS = 25
-RING_THICKNESS = 5
-RING_SPACING = 180
-RING_BOTTOM_MARGIN = 45
-RING_START_X = 100
-TEXT_OFFSET = 35
-
-# Score options
-SCORE_OPTIONS = {
-    '1': 1,
-    '2': 2,
-    '3': 5,
-    '4': 10,
-    '5': 15,
-    '6': 20,
-    '7': 50,
-    '8': float('inf')
-}
-
-# Ball acceleration
+# Ball speed constants
 BALL_SPEED_INCREASE = 1.05
 INITIAL_BALL_SPEED = 10
-
-# Power-up constants
-POWERUP_DURATION = 5
-POWERUP_COOLDOWN = 10
-POWERUP_MULTIPLIER = 1.5
-
-# Speed power-up constants
-SPEED_POWERUP_DURATION = 3
-SPEED_POWERUP_COOLDOWN = 15
-SPEED_MULTIPLIER = 2
-
-# Reverse power-up constants
-REVERSE_POWERUP_COOLDOWN = 30
-
-# Slow-down power-up constants
-SLOW_POWERUP_DURATION = 5
-SLOW_POWERUP_COOLDOWN = 20
-SLOW_MULTIPLIER = 0.7
-
-# Chaos power-up constants
-CHAOS_POWERUP_DURATION = 3
-CHAOS_POWERUP_COOLDOWN = 30
-CHAOS_SPEED_MULTIPLIER = 4
-CHAOS_SIZE_MULTIPLIER = 0.75
-
-# Powershot constants
-POWERSHOT_COOLDOWN = 15  # seconds
-POWERSHOT_MULTIPLIER = 3  # Triple speed
-
-# Pinpoint constants
-PINPOINT_COOLDOWN = 10  # seconds
-
-# Stealth ability constants
-STEALTH_DURATION = 2  # seconds
-STEALTH_COOLDOWN = 15  # seconds
 
 # Colors
 WHITE = (255, 255, 255)
@@ -125,6 +59,79 @@ EXPLOSION_COLORS = [
     (255, 69, 0),    # Red-Orange
     (255, 0, 0)      # Red
 ]
+
+# Title color change interval (in seconds)
+TITLE_COLOR_CHANGE_INTERVAL = 0.5
+
+# Enable alpha blending for transparency
+screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+
+# Last title color change time
+last_title_color_change = time.time()
+current_title_color = WHITE
+
+# Bot difficulty settings
+BOT_DIFFICULTY = {
+    'EASY': {'speed': 4, 'reaction_delay': 0.3, 'prediction_error': 100},
+    'MEDIUM': {'speed': 6, 'reaction_delay': 0.15, 'prediction_error': 50},
+    'HARD': {'speed': 8, 'reaction_delay': 0.05, 'prediction_error': 20},
+    'ULTRA': {'speed': 10, 'reaction_delay': 0, 'prediction_error': 5}
+}
+
+# UI Constants
+RING_RADIUS = 25
+RING_THICKNESS = 5
+RING_SPACING = 180
+RING_BOTTOM_MARGIN = 45
+RING_START_X = 100
+TEXT_OFFSET = 35
+
+# Score options
+SCORE_OPTIONS = {
+    '1': 1,
+    '2': 2,
+    '3': 5,
+    '4': 10,
+    '5': 15,
+    '6': 20,
+    '7': 50,
+    '8': float('inf')
+}
+
+# Power-up constants
+POWERUP_DURATION = 5
+POWERUP_COOLDOWN = 10
+POWERUP_MULTIPLIER = 1.5
+
+# Speed power-up constants
+SPEED_POWERUP_DURATION = 3
+SPEED_POWERUP_COOLDOWN = 15
+SPEED_MULTIPLIER = 2
+
+# Reverse power-up constants
+REVERSE_POWERUP_COOLDOWN = 30
+
+# Slow-down power-up constants
+SLOW_POWERUP_DURATION = 5
+SLOW_POWERUP_COOLDOWN = 20
+SLOW_MULTIPLIER = 0.7
+
+# Chaos power-up constants
+CHAOS_POWERUP_DURATION = 3
+CHAOS_POWERUP_COOLDOWN = 30
+CHAOS_SPEED_MULTIPLIER = 4
+CHAOS_SIZE_MULTIPLIER = 0.75
+
+# Powershot constants
+POWERSHOT_COOLDOWN = 15  # seconds
+POWERSHOT_MULTIPLIER = 3  # Triple speed
+
+# Pinpoint constants
+PINPOINT_COOLDOWN = 10  # seconds
+
+# Stealth ability constants
+STEALTH_DURATION = 2  # seconds
+STEALTH_COOLDOWN = 15  # seconds
 
 # Available abilities
 ABILITIES = {
@@ -188,8 +195,16 @@ def get_random_color():
     return (random.randint(50, 255), random.randint(50, 255), random.randint(50, 255))
 
 def draw_menu():
+    global last_title_color_change, current_title_color
+    
+    # Check if it's time to change the title color
+    current_time = time.time()
+    if current_time - last_title_color_change >= TITLE_COLOR_CHANGE_INTERVAL:
+        current_title_color = get_random_color()
+        last_title_color_change = current_time
+    
     screen.fill(BLACK)
-    title = large_font.render("PONG", True, WHITE)
+    title = large_font.render("PONG", True, current_title_color)
     one_player = menu_font.render("Press 1 for Single Player", True, WHITE)
     two_player = menu_font.render("Press 2 for Two Players", True, WHITE)
     
